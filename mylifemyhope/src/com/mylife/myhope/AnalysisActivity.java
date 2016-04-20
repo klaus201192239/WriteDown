@@ -65,8 +65,12 @@ public class AnalysisActivity extends Activity {
 
 		
 		Calendar cal=Calendar.getInstance();
-		@SuppressWarnings("static-access")
-		int month=cal.MONTH;
+
+		//int month=cal.MONTH;
+		
+		int month = cal.get(Calendar.MONTH)+1;
+		
+		
 		
 		System.out.println(month);
 		
@@ -215,6 +219,10 @@ public class AnalysisActivity extends Activity {
 			}
 
 			cache.allthingTime.setText(list.get(position).year+"年"+list.get(position).month+"月");
+			
+			
+			System.out.println(list.get(position).year+"年"+list.get(position).month+"月");
+			
 			cache.allthingSum.setText("共做"+list.get(position).summer+"件事情");
 			cache.allthingGood.setText("其中"+list.get(position).good+"事情较为满意");
 			cache.allthingImportant.setText("包含"+list.get(position).important+"件大事");
